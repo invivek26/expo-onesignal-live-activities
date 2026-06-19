@@ -26,8 +26,8 @@ export const withAppDelegate: ConfigPlugin = (config) => {
       contents = insertContentsInsideSwiftFunctionBlock(
         contents,
         'application(_:didFinishLaunchingWithOptions:)',
-        '    LiveActivityCoordinator.shared.start()',
-        { position: 'tail' }
+        '\n    if #available(iOS 16.2, *) {\n      Task { await LiveActivityCoordinator.shared.start() }\n    }',
+        { position: 'tailBeforeLastReturn' }
       );
     }
 
