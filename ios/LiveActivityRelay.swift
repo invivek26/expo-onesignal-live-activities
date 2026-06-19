@@ -20,9 +20,11 @@ public class OneSignalLiveActivityRelay: LiveActivityRelaying {
     }
 
     public func setPushToStartToken(_ token: String) {
-        OneSignalLiveActivitiesManagerImpl.setPushToStartToken(
-            DefaultLiveActivityAttributes.self,
-            withToken: token
-        )
+        if #available(iOS 17.2, *) {
+            OneSignalLiveActivitiesManagerImpl.setPushToStartToken(
+                DefaultLiveActivityAttributes.self,
+                withToken: token
+            )
+        }
     }
 }
