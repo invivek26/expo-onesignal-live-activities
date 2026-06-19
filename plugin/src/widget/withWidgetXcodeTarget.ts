@@ -63,6 +63,7 @@ export const withWidgetXcodeTarget: ConfigPlugin<WidgetTargetProps> = (config, p
     xcodeProject.addBuildPhase([], 'PBXFrameworksBuildPhase', 'Frameworks', widgetTarget.uuid);
 
     const devTeam = resolveDevTeam(xcodeProject);
+    const { marketingVersion, currentProjectVersion } = resolveMainTargetVersions(xcodeProject);
 
     const configurations = xcodeProject.pbxXCBuildConfigurationSection();
     for (const key in configurations) {
@@ -81,8 +82,8 @@ export const withWidgetXcodeTarget: ConfigPlugin<WidgetTargetProps> = (config, p
       cfg.buildSettings.SWIFT_EMIT_LOC_STRINGS = 'YES';
       cfg.buildSettings.GENERATE_INFOPLIST_FILE = 'NO';
       cfg.buildSettings.ENABLE_USER_SCRIPT_SANDBOXING = 'NO';
-      cfg.buildSettings.MARKETING_VERSION = '"$(MARKETING_VERSION)"';
-      cfg.buildSettings.CURRENT_PROJECT_VERSION = '"$(CURRENT_PROJECT_VERSION)"';
+      cfg.buildSettings.MARKETING_VERSION = marketingVersion;
+      cfg.buildSettings.CURRENT_PROJECT_VERSION = currentProjectVersion;
       cfg.buildSettings.LD_RUNPATH_SEARCH_PATHS =
         '"$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"';
 
@@ -126,4 +127,25 @@ function resolveDevTeam(xcodeProject: any): string | undefined {
     }
   }
   return undefined;
+}
+
+function resolveMainTargetVersions(xcodeProject: any): {
+  marketingVersion: string;
+  currentProjectVersion: string;
+} {
+  const configurations = xcodeProject.pbxXCBuildConfigurationSection();
+  for (const key in configurations) {
+    const cfg = configurations[key];
+    if (typeof cfg !== 'object') continue;
+    const mv = cfg.buildSettings?.MARKETING_VERSION;
+    const cpv = cfg.buildSettings?.CURRENT_PROJECT_VERSION;
+    // The main target has concrete values (e.g. "1.0", 1), not variable references.
+    if (mv && !String(mv).includes('$') && cpv && !String(cpv).includes('$')) {
+      return {
+        marketingVersion: String(mv),
+        currentProjectVersion: String(cpv),
+      };
+    }
+  }
+  return { marketingVersion: '1.0', currentProjectVersion: '1' };
 }
