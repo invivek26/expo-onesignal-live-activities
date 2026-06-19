@@ -5,29 +5,65 @@
 ![iOS](https://img.shields.io/badge/iOS-4630EB.svg?style=flat-square&logo=APPLE&labelColor=999999&logoColor=fff)
 [![Expo SDK](https://img.shields.io/badge/Expo-SDK%2053+-000020.svg)](https://expo.dev)
 
-Client-side Live Activity control for React Native + OneSignal. A drop-in replacement for `setupDefault()` that gives you token observation, activity updates, and lifecycle management from JavaScript.
+The complete Live Activity setup for Expo + OneSignal. One package handles everything — Widget Extension target, entitlements, Info.plist, AppDelegate, push-to-start token registration, EAS credentials, and widget UI scaffolding. You write SwiftUI, the package handles the rest.
 
 > [!IMPORTANT]
 > **iOS only.** All functions gracefully return no-ops on Android and web. Requires iOS 16.2+ and a physical device for full functionality.
 
-## Why This Exists
+## What This Replaces
 
-OneSignal's `setupDefault()` internally consumes all ActivityKit async sequences (`activityUpdates`, `pushTokenUpdates`, `pushToStartTokenUpdates`). Since Swift `AsyncSequence` is [unicast by design](https://github.com/swiftlang/swift-evolution/blob/main/proposals/0298-asyncsequence.md), two consumers race for values — one gets the token, the other misses it.
+Setting up OneSignal Live Activities in Expo normally requires **15+ manual steps**:
 
-This means with `setupDefault()` active, you **cannot** observe activities from your own code, update them client-side, or receive push token events in JavaScript.
+<details>
+<summary>Without this package (click to expand)</summary>
 
-This package replaces `setupDefault()` with a coordinator that owns all sequences, relays tokens to OneSignal via manual `enter()`/`exit()`/`setPushToStartToken()` calls, and exposes activity lifecycle to JavaScript.
+1. Create a Widget Extension target in Xcode (File > New > Target > Widget Extension)
+2. Add `NSSupportsLiveActivities` to Info.plist
+3. Add `NSSupportsLiveActivitiesFrequentUpdates` to Info.plist
+4. Configure `aps-environment` entitlement
+5. Set up App Group entitlements for data sharing
+6. Edit the Podfile to add `OneSignalXCFramework` to the widget target
+7. Run `pod install`
+8. Write a Swift struct conforming to `OneSignalLiveActivityAttributes`
+9. Write the full SwiftUI widget UI (lock screen + Dynamic Island)
+10. Add the widget target to the main app target's membership
+11. Call `OneSignal.LiveActivities.setupDefault()` in AppDelegate
+12. Set up an async task for `pushToStartTokenUpdates` (iOS 17.2+)
+13. Register push-to-start tokens with OneSignal manually
+14. Add `appExtensions` to `extra.eas.build.experimental.ios` for EAS Build signing
+15. Upload `.p8` APNs key to OneSignal dashboard
+16. Build server-side API calls with exact property-name parity
+
+</details>
+
+**With this package:**
+
+```bash
+npx expo install expo-onesignal-live-activities  # 1. Install
+npx expo-onesignal-live-activities               # 2. Scaffold widget UI templates
+# 3. Add plugin to app.config.ts, customize SwiftUI, prebuild
+```
+
+The config plugin handles steps 1–14 automatically. You write the SwiftUI widget UI (step 9) and set up your server API (step 16).
 
 ## Features
 
-- **Push-to-start token registration** — automatically registers push-to-start tokens with OneSignal so your server can start activities remotely
-- **Token observation** — captures per-activity push tokens and calls OneSignal `enter()`/`exit()` automatically
-- **Activity updates** — update Live Activity content state from JavaScript without a push round-trip
-- **Lifecycle management** — end activities and stop/start observation on demand
+### Zero-config setup (handled by the config plugin)
+- **Info.plist** — sets `NSSupportsLiveActivities` and `NSSupportsLiveActivitiesFrequentUpdates`
+- **Entitlements** — configures `aps-environment` and App Group
+- **AppDelegate** — injects the Live Activity coordinator before the RN bridge boots
+- **Widget Extension** — creates the Xcode target with correct build settings, signing, versioning, and font registration
+- **EAS Build** — auto-registers the extension for credential provisioning (no manual `appExtensions` config)
+- **Push-to-start tokens** — registers tokens with OneSignal at app launch, including a [synchronous fallback](https://developer.apple.com/forums/thread/799526) for the iOS 17.2–18.x timing race
+- **Activity token relay** — automatically calls OneSignal `enter()`/`exit()` as activities start and end
+- **Widget UI scaffolding** — CLI generates starter SwiftUI templates you can customize
+
+### JavaScript API
+- **Client-side updates** — update Live Activity content state from JavaScript without a push round-trip
+- **End activities** — programmatically dismiss activities from JavaScript
 - **Activity listing** — enumerate all active activities with tokens, attributes, and state
+- **Device support check** — check if Live Activities are supported before showing related UI
 - **React hooks** — `useLiveActivityToken` and `useLiveActivities` for declarative usage
-- **Config plugin** — auto-configures Info.plist, entitlements, AppDelegate, and EAS credentials
-- **Widget scaffolding** — CLI + config plugin to create and manage the Widget Extension target automatically
 
 ## Prerequisites
 

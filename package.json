@@ -1,7 +1,7 @@
 {
   "name": "expo-onesignal-live-activities",
   "version": "0.2.9",
-  "description": "Client-side Live Activity control for React Native + OneSignal. A drop-in replacement for setupDefault() that gives you token observation, activity updates, and lifecycle management from JavaScript.",
+  "description": "The complete Live Activity setup for Expo + OneSignal. Handles Widget Extension target, entitlements, Info.plist, AppDelegate, push-to-start tokens, EAS credentials, and widget UI scaffolding — you just write SwiftUI.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "bin": {
