@@ -1,9 +1,12 @@
 {
   "name": "expo-onesignal-live-activities",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Client-side Live Activity control for React Native + OneSignal. A drop-in replacement for setupDefault() that gives you token observation, activity updates, and lifecycle management from JavaScript.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "bin": {
+    "expo-onesignal-live-activities": "./bin/init.js"
+  },
   "scripts": {
     "build": "node internal/module_scripts/build.js && tsc -p plugin/tsconfig.json",
     "clean": "node internal/module_scripts/clean.js",
