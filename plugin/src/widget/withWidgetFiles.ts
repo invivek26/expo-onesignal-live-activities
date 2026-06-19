@@ -8,7 +8,7 @@ export const withWidgetFiles: ConfigPlugin<WidgetTargetProps> = (config, props) 
   withDangerousMod(config, [
     'ios',
     async (config) => {
-      const { name, widgetDir, fonts, appGroupIdentifier, mode } = props;
+      const { name, widgetDir, fonts, appGroupIdentifier } = props;
       const projectRoot = config.modRequest.projectRoot;
       const iosDir = path.join(projectRoot, 'ios');
       const targetDir = path.join(iosDir, name);
@@ -28,7 +28,7 @@ export const withWidgetFiles: ConfigPlugin<WidgetTargetProps> = (config, props) 
       const infoPlist = generateInfoPlist(name);
       fs.writeFileSync(path.join(targetDir, `${name}-Info.plist`), infoPlist);
 
-      const entitlements = generateEntitlements(appGroupIdentifier, mode);
+      const entitlements = generateEntitlements(appGroupIdentifier);
       fs.writeFileSync(path.join(targetDir, `${name}.entitlements`), entitlements);
 
       if (fonts?.length) {
@@ -87,7 +87,7 @@ function generateInfoPlist(targetName: string): string {
 </plist>`;
 }
 
-function generateEntitlements(appGroupIdentifier?: string, mode?: string): string {
+function generateEntitlements(appGroupIdentifier?: string): string {
   let groupsXml = '';
   if (appGroupIdentifier) {
     groupsXml = `
@@ -97,12 +97,13 @@ function generateEntitlements(appGroupIdentifier?: string, mode?: string): strin
   </array>`;
   }
 
+  // Widget extensions do NOT need aps-environment — they don't receive push
+  // notifications directly. Only the main app needs it (for push-to-start).
+  // The extension only needs the App Group to share data with the main app.
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-  <key>aps-environment</key>
-  <string>${mode ?? 'development'}</string>${groupsXml}
+<dict>${groupsXml}
 </dict>
 </plist>`;
 }
