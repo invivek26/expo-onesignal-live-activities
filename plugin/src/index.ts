@@ -38,6 +38,47 @@ const withLiveActivities: ConfigPlugin<LiveActivityPluginProps | void> = (config
       appGroupIdentifier,
       mode,
     });
+
+    const bundleIdentifier = config.ios?.bundleIdentifier ?? '';
+    const extensionBundleId = `${bundleIdentifier}.${widgetTarget.name}`;
+
+    const existingExtensions: any[] =
+      config.extra?.eas?.build?.experimental?.ios?.appExtensions ?? [];
+
+    const alreadyRegistered = existingExtensions.some(
+      (ext: any) => ext.targetName === widgetTarget.name
+    );
+
+    if (!alreadyRegistered) {
+      const entitlements: Record<string, any> = {};
+      if (appGroupIdentifier) {
+        entitlements['com.apple.security.application-groups'] = [appGroupIdentifier];
+      }
+
+      config.extra = {
+        ...config.extra,
+        eas: {
+          ...config.extra?.eas,
+          build: {
+            ...config.extra?.eas?.build,
+            experimental: {
+              ...config.extra?.eas?.build?.experimental,
+              ios: {
+                ...config.extra?.eas?.build?.experimental?.ios,
+                appExtensions: [
+                  ...existingExtensions,
+                  {
+                    targetName: widgetTarget.name,
+                    bundleIdentifier: extensionBundleId,
+                    entitlements,
+                  },
+                ],
+              },
+            },
+          },
+        },
+      };
+    }
   }
 
   return config;
