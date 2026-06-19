@@ -120,52 +120,24 @@ npx expo prebuild -p ios --clean
 
 ## Quick Start
 
+With the config plugin configured, **observation is fully automatic** — push-to-start token registration, activity token relay to OneSignal, and lifecycle tracking all happen at app launch with zero JavaScript. The only function most apps need is `updateLiveActivity` for client-side content updates:
+
 ```typescript
-import {
-  startObserving,
-  updateLiveActivity,
-  endLiveActivity,
-  isLiveActivitiesSupported,
-} from 'expo-onesignal-live-activities';
+import { updateLiveActivity } from 'expo-onesignal-live-activities';
 
-// Start observing Live Activity tokens (call once at app startup)
-await startObserving();
-
-// Check if device supports Live Activities
-const supported = await isLiveActivitiesSupported();
-
-// Update a Live Activity's content state
+// Update a running Live Activity's content state (matched by attribute key/value)
 await updateLiveActivity('orderId', 'order_123', {
   status: 'Out for delivery',
   eta: '12:30 PM',
   progress: 0.75,
 });
-
-// End a Live Activity
-await endLiveActivity('orderId', 'order_123');
 ```
+
+That's it. The config plugin injects `LiveActivityCoordinator.shared.start()` into your AppDelegate before the React Native bridge boots, so all ActivityKit sequences are observed from the moment the app launches — including background push-to-start launches.
 
 ## API Reference
 
-### Functions
-
-#### `startObserving()`
-
-Start observing Live Activity push tokens. Must be called once at app startup, or let the config plugin auto-start via AppDelegate injection.
-
-When a new Live Activity is started via push-to-start, this captures its token and registers it with OneSignal automatically.
-
-```typescript
-await startObserving();
-```
-
-#### `stopObserving()`
-
-Stop observing all Live Activity tokens. Cancels all observation tasks.
-
-```typescript
-await stopObserving();
-```
+### Core Functions
 
 #### `updateLiveActivity(matchKey, matchValue, contentState)`
 
@@ -216,6 +188,30 @@ Check if the device supports Live Activities (iOS 16.2+, activities enabled in S
 
 ```typescript
 const supported = await isLiveActivitiesSupported();
+```
+
+### Advanced Functions
+
+These are escape hatches for advanced use cases. Most apps don't need them.
+
+#### `startObserving()`
+
+Manually start the Live Activity coordinator. **You don't need this if you use the config plugin** — it auto-starts from AppDelegate before the React Native bridge boots. Only use this if you've opted out of the config plugin's AppDelegate injection.
+
+Calling this when observation is already running is a no-op (idempotent).
+
+```typescript
+await startObserving();
+```
+
+#### `stopObserving()`
+
+Stop all Live Activity observation. Cancels push-to-start token registration, activity token relay, and lifecycle tracking. **This is destructive** — after calling it, no tokens are relayed to OneSignal until `startObserving()` is called again.
+
+Use case: logout flows where you want to fully disconnect from Live Activity observation.
+
+```typescript
+await stopObserving();
 ```
 
 ### Hooks
