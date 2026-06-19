@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["ExpoOnesignalLiveActivitiesModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.onesignalliveactivities.ExpoOnesignalLiveActivitiesModule"]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "expo-onesignal-live-activities": ["../src/index"],
+      "expo-onesignal-live-activities/*": ["../src/*"]
+    }
+  }
+}
