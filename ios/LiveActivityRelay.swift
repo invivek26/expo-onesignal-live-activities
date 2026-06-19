@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import OneSignalLiveActivities
+@preconcurrency import OneSignalFramework
 
 public protocol LiveActivityRelaying {
     func enterLiveActivity(_ activityId: String, withToken token: String)
