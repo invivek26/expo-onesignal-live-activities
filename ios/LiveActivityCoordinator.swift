@@ -57,7 +57,6 @@ public class LiveActivityCoordinator {
 
             do {
                 for try await tokenData in Activity<DefaultLiveActivityAttributes>.pushToStartTokenUpdates {
-                    guard let self else { return }
                     let token = tokenData.map { String(format: "%02x", $0) }.joined()
                     self.relay.setPushToStartToken(token)
                     LiveActivityLogger.info("Push-to-start token relayed")
