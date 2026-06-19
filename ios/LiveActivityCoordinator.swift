@@ -22,13 +22,48 @@ public class LiveActivityCoordinator {
         self.activityIdKey = activityIdKey
     }
 
+    private var activityUpdatesTask: Task<Void, Never>?
+    private var pushToStartTask: Task<Void, Never>?
+
     // MARK: - Public lifecycle
 
     public func start() {
-        Task { [weak self] in
+        guard activityUpdatesTask == nil else { return }
+
+        // Pre-seed: activityUpdates does NOT replay existing activities.
+        for activity in Activity<DefaultLiveActivityAttributes>.activities {
+            observeActivity(activity)
+        }
+
+        activityUpdatesTask = Task { [weak self] in
             for await activity in Activity<DefaultLiveActivityAttributes>.activityUpdates {
                 guard let self else { return }
                 self.observeActivity(activity)
+            }
+        }
+
+        // Push-to-start token (iOS 17.2+): registers the capability to start
+        // activities via push without the user opening the app.
+        pushToStartTask = Task { [weak self] in
+            guard #available(iOS 17.2, *) else { return }
+            guard let self else { return }
+
+            // Synchronous fallback first — token may have been issued before this loop starts.
+            if let existingToken = Activity<DefaultLiveActivityAttributes>.pushToStartToken {
+                let token = existingToken.map { String(format: "%02x", $0) }.joined()
+                self.relay.setPushToStartToken(token)
+                LiveActivityLogger.info("Push-to-start token relayed (synchronous)")
+            }
+
+            do {
+                for try await tokenData in Activity<DefaultLiveActivityAttributes>.pushToStartTokenUpdates {
+                    guard let self else { return }
+                    let token = tokenData.map { String(format: "%02x", $0) }.joined()
+                    self.relay.setPushToStartToken(token)
+                    LiveActivityLogger.info("Push-to-start token relayed")
+                }
+            } catch {
+                LiveActivityLogger.error("pushToStartTokenUpdates error: \(error.localizedDescription)")
             }
         }
     }
