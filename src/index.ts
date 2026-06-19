@@ -1,4 +1,17 @@
-// Reexport the native module. On web, it will be resolved to ExpoOnesignalLiveActivitiesModule.web.ts
-// and on native platforms to ExpoOnesignalLiveActivitiesModule.ts
-export { default } from './ExpoOnesignalLiveActivitiesModule';
-export * from './ExpoOnesignalLiveActivities.types';
+export {
+  startObserving,
+  stopObserving,
+  updateLiveActivity,
+  endLiveActivity,
+  listActiveActivities,
+  isLiveActivitiesSupported,
+} from './api';
+
+export { useLiveActivityToken } from './hooks/useLiveActivityToken';
+export { useLiveActivities } from './hooks/useLiveActivities';
+
+export type {
+  LiveActivityInfo,
+  LiveActivityTokenEvent,
+  ContentStateUpdate,
+} from './ExpoOnesignalLiveActivities.types';

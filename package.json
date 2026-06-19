@@ -1,35 +1,47 @@
 {
   "name": "expo-onesignal-live-activities",
   "version": "0.1.0",
-  "description": "My new module",
+  "description": "Client-side Live Activity control for React Native + OneSignal. A drop-in replacement for setupDefault() that gives you token observation, activity updates, and lifecycle management from JavaScript.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
-    "build": "node internal/module_scripts/build.js",
+    "build": "node internal/module_scripts/build.js && tsc -p plugin/tsconfig.json",
     "clean": "node internal/module_scripts/clean.js",
     "lint": "eslint src/",
     "test": "node internal/module_scripts/test.js",
     "prepare": "node internal/module_scripts/prepare.js",
     "open:ios": "node internal/module_scripts/open-ios.js",
-    "open:android": "node internal/module_scripts/open-android.js"
+    "open:android": "node internal/module_scripts/open-android.js",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "react-native",
     "expo",
-    "expo-onesignal-live-activities",
-    "ExpoOnesignalLiveActivities"
+    "live-activities",
+    "onesignal",
+    "ios",
+    "activitykit",
+    "push-to-start",
+    "dynamic-island",
+    "lock-screen"
   ],
-  "repository": "",
-  "bugs": {
-    "url": "/issues"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/invivek26/expo-onesignal-live-activities.git"
   },
-  "author": "Vivek Indlebele Narasimha Prasad <vivek@gamestock.app> ()",
+  "bugs": {
+    "url": "https://github.com/invivek26/expo-onesignal-live-activities/issues"
+  },
+  "author": "Vivek Narasimha Prasad <invicky26@gmail.com>",
   "license": "MIT",
-  "homepage": "#readme",
-  "dependencies": {},
+  "homepage": "https://github.com/invivek26/expo-onesignal-live-activities#readme",
+  "dependencies": {
+    "@expo/config-plugins": ">=7.0.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@types/jest": "^29.2.1",
+    "@types/node": "^25.9.3",
     "@types/react": "~19.1.1",
     "babel-preset-expo": "~55.0.8",
     "eslint": "~9.39.4",
@@ -42,10 +54,16 @@
     "typescript": "^5.9.2"
   },
   "jest": {
-    "preset": "jest-expo",
+    "transform": {
+      "^.+\\.(ts|tsx)$": ["babel-jest", { "presets": ["babel-preset-expo"] }]
+    },
     "roots": [
       "<rootDir>/src"
-    ]
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx"]
   },
   "peerDependencies": {
     "expo": "*",

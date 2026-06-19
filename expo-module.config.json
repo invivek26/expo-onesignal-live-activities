@@ -1,9 +1,6 @@
 {
-  "platforms": ["apple", "android", "web"],
+  "platforms": ["apple"],
   "apple": {
     "modules": ["ExpoOnesignalLiveActivitiesModule"]
-  },
-  "android": {
-    "modules": ["expo.modules.onesignalliveactivities.ExpoOnesignalLiveActivitiesModule"]
   }
 }
