@@ -1,8 +1,7 @@
 import { withAppDelegate as withAppDelegateMod, type ConfigPlugin } from '@expo/config-plugins';
-import {
-  addSwiftImports,
-  insertContentsInsideSwiftFunctionBlock,
-} from '@expo/config-plugins/build/ios/codeMod';
+import { insertContentsInsideSwiftFunctionBlock } from '@expo/config-plugins/build/ios/codeMod';
+
+const IMPORT_LINE = 'internal import ExpoOnesignalLiveActivities';
 
 export const withAppDelegate: ConfigPlugin = (config) => {
   return withAppDelegateMod(config, (config) => {
@@ -12,7 +11,16 @@ export const withAppDelegate: ConfigPlugin = (config) => {
 
     let contents = config.modResults.contents;
 
-    contents = addSwiftImports(contents, ['ExpoOnesignalLiveActivities']);
+    if (!contents.includes(IMPORT_LINE)) {
+      const firstImportIndex = contents.search(/^import /m);
+      if (firstImportIndex !== -1) {
+        contents =
+          contents.slice(0, firstImportIndex) +
+          IMPORT_LINE +
+          '\n' +
+          contents.slice(firstImportIndex);
+      }
+    }
 
     if (!contents.includes('LiveActivityCoordinator.shared.start()')) {
       contents = insertContentsInsideSwiftFunctionBlock(
