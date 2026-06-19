@@ -25,7 +25,10 @@ export const withWidgetFiles: ConfigPlugin<WidgetTargetProps> = (config, props) 
         );
       }
 
-      const infoPlist = generateInfoPlist(name);
+      const fontFileNames = (fonts ?? [])
+        .map((f) => path.basename(f))
+        .filter((f) => f.endsWith('.ttf') || f.endsWith('.otf'));
+      const infoPlist = generateInfoPlist(name, fontFileNames);
       fs.writeFileSync(path.join(targetDir, `${name}-Info.plist`), infoPlist);
 
       const entitlements = generateEntitlements(appGroupIdentifier);
@@ -59,7 +62,17 @@ function copyDirectorySync(src: string, dest: string): void {
   }
 }
 
-function generateInfoPlist(targetName: string): string {
+function generateInfoPlist(targetName: string, fontFileNames: string[]): string {
+  let fontsXml = '';
+  if (fontFileNames.length > 0) {
+    const items = fontFileNames.map((f) => `    <string>${f}</string>`).join('\n');
+    fontsXml = `
+  <key>UIAppFonts</key>
+  <array>
+${items}
+  </array>`;
+  }
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -77,7 +90,7 @@ function generateInfoPlist(targetName: string): string {
   <key>CFBundlePackageType</key>
   <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
   <key>CFBundleExecutable</key>
-  <string>$(EXECUTABLE_NAME)</string>
+  <string>$(EXECUTABLE_NAME)</string>${fontsXml}
   <key>NSExtension</key>
   <dict>
     <key>NSExtensionPointIdentifier</key>
