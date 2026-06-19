@@ -73,16 +73,16 @@ export const withWidgetXcodeTarget: ConfigPlugin<WidgetTargetProps> = (config, p
       cfg.buildSettings.SWIFT_VERSION = '5.9';
       cfg.buildSettings.IPHONEOS_DEPLOYMENT_TARGET = effectiveDeploymentTarget;
       cfg.buildSettings.TARGETED_DEVICE_FAMILY = '"1,2"';
-      cfg.buildSettings.INFOPLIST_FILE = `${name}/${name}-Info.plist`;
+      cfg.buildSettings.INFOPLIST_FILE = `"${name}/${name}-Info.plist"`;
       cfg.buildSettings.CODE_SIGN_STYLE = 'Automatic';
-      cfg.buildSettings.CODE_SIGN_ENTITLEMENTS = `${name}/${name}.entitlements`;
+      cfg.buildSettings.CODE_SIGN_ENTITLEMENTS = `"${name}/${name}.entitlements"`;
       cfg.buildSettings.PRODUCT_BUNDLE_IDENTIFIER = `"${bundleId}"`;
       cfg.buildSettings.SKIP_INSTALL = 'YES';
       cfg.buildSettings.SWIFT_EMIT_LOC_STRINGS = 'YES';
       cfg.buildSettings.GENERATE_INFOPLIST_FILE = 'NO';
       cfg.buildSettings.ENABLE_USER_SCRIPT_SANDBOXING = 'NO';
-      cfg.buildSettings.MARKETING_VERSION = '$(MARKETING_VERSION)';
-      cfg.buildSettings.CURRENT_PROJECT_VERSION = '$(CURRENT_PROJECT_VERSION)';
+      cfg.buildSettings.MARKETING_VERSION = '"$(MARKETING_VERSION)"';
+      cfg.buildSettings.CURRENT_PROJECT_VERSION = '"$(CURRENT_PROJECT_VERSION)"';
       cfg.buildSettings.LD_RUNPATH_SEARCH_PATHS =
         '"$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"';
 
