@@ -2,22 +2,22 @@
 
 [![npm version](https://img.shields.io/npm/v/expo-onesignal-live-activities.svg)](https://www.npmjs.com/package/expo-onesignal-live-activities)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Platform: iOS](https://img.shields.io/badge/platform-iOS-lightgrey.svg)](https://developer.apple.com/documentation/activitykit)
+![iOS](https://img.shields.io/badge/iOS-4630EB.svg?style=flat-square&logo=APPLE&labelColor=999999&logoColor=fff)
 [![Expo SDK](https://img.shields.io/badge/Expo-SDK%2052+-000020.svg)](https://expo.dev)
 
 Client-side Live Activity control for React Native + OneSignal. A drop-in replacement for `setupDefault()` that gives you token observation, activity updates, and lifecycle management from JavaScript.
 
-## Why this package?
+> [!IMPORTANT]
+> **iOS only.** All functions gracefully return no-ops on Android and web. Requires iOS 16.2+ and a physical device for full functionality.
 
-OneSignal's `setupDefault()` handles Live Activity token registration automatically but gives you **zero visibility or control** from your React Native code. This package replaces it with a transparent bridge that:
+## Features
 
-- Observes push-to-start tokens and forwards them to OneSignal
-- Lets you **update** and **end** Live Activities from JS
-- Lists all active activities with their tokens and state
-- Exposes React hooks for token events and activity polling
-- Works with OneSignal's existing push-to-start server API
-
-> **iOS only.** All functions gracefully return no-ops on Android and web.
+- **Token observation** — automatically captures push-to-start tokens and registers them with OneSignal
+- **Activity updates** — update Live Activity content state from JavaScript
+- **Lifecycle management** — end activities and stop/start observation on demand
+- **Activity listing** — enumerate all active activities with tokens, attributes, and state
+- **React hooks** — `useLiveActivityToken` and `useLiveActivities` for declarative usage
+- **Config plugin** — auto-configures Info.plist, entitlements, and AppDelegate
 
 ## Prerequisites
 
@@ -26,7 +26,10 @@ OneSignal's `setupDefault()` handles Live Activity token registration automatica
 - iOS 16.2+ deployment target
 - A Widget Extension target with `DefaultLiveActivityAttributes` (from OneSignal)
 
-**Important:** Do **not** call `OneSignal.LiveActivities.setupDefault()` in your app. This package replaces that functionality with client-side control.
+> [!WARNING]
+> Do **not** call `OneSignal.LiveActivities.setupDefault()` in your app. This package replaces that functionality. Using both causes duplicate token registrations.
+>
+> Not compatible with Expo Go — use [EAS Build](https://docs.expo.dev/build/introduction/) or `npx expo prebuild`.
 
 ## Installation
 
