@@ -23,9 +23,8 @@ public class ExpoOnesignalLiveActivitiesModule: Module {
             guard #available(iOS 16.2, *) else { return }
             for activity in Activity<DefaultLiveActivityAttributes>.activities {
                 if let val = activity.attributes.data[matchKey]?.asString(), val == matchValue {
-                    let state = DefaultLiveActivityAttributes.ContentState(
-                        data: contentState.mapValues { AnyCodable($0) }
-                    )
+                    let jsonData = try JSONSerialization.data(withJSONObject: ["data": contentState])
+                    let state = try JSONDecoder().decode(DefaultLiveActivityAttributes.ContentState.self, from: jsonData)
                     await activity.update(ActivityContent(state: state, staleDate: nil))
                     LiveActivityLogger.info("Updated activity matching \(matchKey)=\(matchValue)")
                     return
