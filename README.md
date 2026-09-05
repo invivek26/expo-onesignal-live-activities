@@ -1,11 +1,15 @@
 # expo-onesignal-live-activities
 
 [![npm version](https://img.shields.io/npm/v/expo-onesignal-live-activities.svg)](https://www.npmjs.com/package/expo-onesignal-live-activities)
+[![npm downloads](https://img.shields.io/npm/dm/expo-onesignal-live-activities.svg)](https://www.npmjs.com/package/expo-onesignal-live-activities)
+[![CI](https://github.com/invivek26/expo-onesignal-live-activities/actions/workflows/ci.yml/badge.svg)](https://github.com/invivek26/expo-onesignal-live-activities/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![iOS](https://img.shields.io/badge/iOS-4630EB.svg?style=flat-square&logo=APPLE&labelColor=999999&logoColor=fff)
 [![Expo SDK](https://img.shields.io/badge/Expo-SDK%2053+-000020.svg)](https://expo.dev)
 
 The complete Live Activity setup for Expo + OneSignal. One package handles everything — Widget Extension target, entitlements, Info.plist, AppDelegate, push-to-start token registration, EAS credentials, and widget UI scaffolding. You write SwiftUI, the package handles the rest.
+
+See this package alongside my other open-source work at [viveks.app/open-source](https://viveks.app/open-source).
 
 > [!IMPORTANT]
 > **iOS only.** All functions gracefully return no-ops on Android and web. Requires iOS 16.2+ and a physical device for full functionality.
@@ -466,3 +470,5 @@ bun run lint
 ## License
 
 MIT
+
+Maintained by [Vivek Indlebele Narasimha Prasad](https://viveks.app).
