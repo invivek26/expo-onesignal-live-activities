@@ -36,9 +36,17 @@
   "bugs": {
     "url": "https://github.com/invivek26/expo-onesignal-live-activities/issues"
   },
-  "author": "Vivek Narasimha Prasad <invicky26@gmail.com>",
+  "author": "Vivek Indlebele Narasimha Prasad <vivek@gamestock.app> (https://viveks.app)",
   "license": "MIT",
-  "homepage": "https://github.com/invivek26/expo-onesignal-live-activities#readme",
+  "homepage": "https://viveks.app/open-source",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org/"
+  },
   "dependencies": {
     "@expo/config-plugins": ">=7.0.0"
   },
